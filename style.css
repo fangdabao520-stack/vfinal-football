@@ -1,8 +1,8 @@
 body {
+  background: #0f0f0f;
+  color: white;
   font-family: Arial;
-  background: #111;
-  color: #fff;
-  padding: 10px;
+  padding: 20px;
 }
 
 h1 {
@@ -10,14 +10,14 @@ h1 {
 }
 
 .card {
-  background: #222;
-  padding: 10px;
+  background: #1c1c1c;
+  padding: 15px;
   margin: 10px 0;
   border-radius: 10px;
 }
 
 button {
-  margin: 3px;
-  padding: 5px;
+  padding: 6px 12px;
+  margin-top: 10px;
   cursor: pointer;
 }
