@@ -10,7 +10,7 @@ async function loadMatches() {
     const res = await fetch("https://api-football-v1.p.rapidapi.com/v3/fixtures?live=all", {
       method: "GET",
       headers: {
-        "X-RapidAPI-Key": "YOUR_API_KEY",
+        "X-RapidAPI-Key": "fefab55904msh780884d8c3ac961p131ff3jsna0165d37ce32",
         "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
       }
     });
