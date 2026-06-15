@@ -7,7 +7,7 @@ async function loadMatches() {
   try {
 
     // ⚽ 1. 获取真实比赛（API-Football）
-    const res = await fetch(https://api-football-v1.p.rapidapi.com/v3/fixtures?next=10", {
+    const res = await fetch(https://https://api-football-v1.p.rapidapi.com/v3/fixtures?league=39&season=2024&next=10", {
       method: "GET",
       headers: {
         "X-RapidAPI-Key": "fefab55904msh780884d8c3ac961p131ff3jsna0165d37ce32",
