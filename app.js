@@ -1,83 +1,84 @@
-const matches = window.matches;
 
-const container = document.getElementById("matches");
-const summary = document.getElementById("summary");
+async function loadMatches() {
 
-let scores = [];
+  const container = document.getElementById("matches");
+  container.innerHTML = "加载中...";
 
-// 初始化比赛卡片
-matches.forEach((m, i) => {
+  try {
 
-  scores[i] = { s: 0, m: 0, r: 0 };
+    // ⚽ 1. 获取真实比赛（API-Football）
+    const res = await fetch("https://api-football-v1.p.rapidapi.com/v3/fixtures?live=all", {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "YOUR_API_KEY",
+        "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+      }
+    });
 
-  const div = document.createElement("div");
-  div.className = "card";
+    const data = await res.json();
 
-  div.innerHTML = `
-    <h3>${m.name}</h3>
+    const matches = data.response.slice(0, 6);
 
-    <button onclick="setS(${i},2)">结构 +2</button>
-    <button onclick="setS(${i},1)">结构 +1</button>
-    <button onclick="setS(${i},0)">结构 0</button>
+    container.innerHTML = "";
 
-    <button onclick="setM(${i},2)">市场 +2</button>
-    <button onclick="setM(${i},0)">市场 0</button>
-    <button onclick="setM(${i},-2)">市场 -2</button>
+    // ⚽ 2. 遍历比赛
+    matches.forEach(m => {
 
-    <button onclick="setR(${i},0)">风险 0</button>
-    <button onclick="setR(${i},1)">风险 -1</button>
-    <button onclick="setR(${i},3)">风险 -3</button>
+      const home = m.teams.home.name;
+      const away = m.teams.away.name;
 
-    <button onclick="calc(${i})">计算结果</button>
+      // 💰 模拟赔率（后面可以升级真实赔率API）
+      const odds_home = 2.10;
+      const odds_draw = 3.20;
+      const odds_away = 3.50;
 
-    <div id="r${i}"></div>
-  `;
+      // 🧠 AI概率模型（简化版）
+      const p_home = 1 / odds_home;
+      const p_draw = 1 / odds_draw;
+      const p_away = 1 / odds_away;
 
-  container.appendChild(div);
-});
+      const total = p_home + p_draw + p_away;
 
-// 设置值
-function setS(i,v){ scores[i].s = v; }
-function setM(i,v){ scores[i].m = v; }
-function setR(i,v){ scores[i].r = v; }
+      const ai_home = p_home / total;
 
-// 计算核心评分
-function calc(i){
+      // 📊 market baseline
+      const market = 0.33;
 
-  const total = scores[i].s + scores[i].m - scores[i].r;
+      // 📈 value计算
+      const value = ai_home - market;
 
-  let result = "";
+      // 🎯 推荐等级
+      let level = "🔴 C级（不推荐）";
 
-  if(total >= 4){
-    result = "🟢 A级（可下注）";
-  } else if(total >= 2){
-    result = "🟡 B级（小注）";
-  } else {
-    result = "🔴 C级（不做）";
+      if (value > 0.08) {
+        level = "🟢 A级（强推荐）";
+      } else if (value > 0.03) {
+        level = "🟡 B级（可小注）";
+      }
+
+      // 🧱 渲染卡片
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <h3>${home} vs ${away}</h3>
+
+        <p>AI胜率: ${(ai_home * 100).toFixed(1)}%</p>
+        <p>Value: ${value.toFixed(3)}</p>
+
+        <h4>${level}</h4>
+
+        <button onclick="alert('模拟下注成功')">下注</button>
+      `;
+
+      container.appendChild(div);
+
+    });
+
+  } catch (e) {
+    container.innerHTML = "❌ 数据加载失败（API或网络问题）";
+    console.log(e);
   }
-
-  document.getElementById("r"+i).innerHTML =
-    `Score: ${total} <br> ${result}`;
-
-  renderSummary();
 }
 
-// 汇总统计
-function renderSummary(){
-
-  let a=0,b=0,c=0;
-
-  scores.forEach(x=>{
-    const t = x.s + x.m - x.r;
-
-    if(t>=4)a++;
-    else if(t>=2)b++;
-    else c++;
-  });
-
-  summary.innerHTML = `
-    🟢 A级：${a} 场<br>
-    🟡 B级：${b} 场<br>
-    🔴 C级：${c} 场
-  `;
-}
+loadMatches();
