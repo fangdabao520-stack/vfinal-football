@@ -22,7 +22,8 @@ async function loadMatches() {
     container.innerHTML = "";
 
     // ⚽ 2. 遍历比赛
-    matches.forEach(m => {
+    const home = m.teams.home.name;
+    const away = m.teams.away.name;
 
       const home = m.teams.home.name;
       const away = m.teams.away.name;
